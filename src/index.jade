@@ -1,0 +1,190 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
+    title Model up!
+
+    link(rel='stylesheet', type='text/css', href='build/build.css')
+
+  body
+
+    article
+      section
+        h1 Getting started with Models
+        p and activeRecord
+        img(src="/images/logo.png", alt="" width="150")
+
+      section
+        h2.bullet In this second lesson
+        ul
+          li MVC's
+          li The model
+          li ActiveRecord
+
+      section
+        h2 MVC's
+        p What does it do?
+        img(src="/images/mvc.png", alt="" width="300")
+
+      section
+        h2 MVC's
+        h3 In Rails
+        p Request = config/routes.rb
+        p Controller = app/controllers
+        p View = app/views
+        p Model = app/models
+        img(src="/images/mvc.png", alt="" width="150")
+
+      section
+        h2 The model
+        h3.bullet It:
+        ul
+          li Mediates between your app and databases
+          li Does all the math
+          li Is the source of (most) Classes
+
+      section
+        h2 ActiveRecord
+        img(src="/images/activerecord.png", alt="" width="150px")
+
+      section
+        h2 ActiveRecord
+        h3.bullet It:
+        ul
+          li Is a framework between the Model and SQL based database systems
+          li converts a ton of awesome stuff to more awesome stuff
+
+      section
+        h2 ActiveRecord
+        h3.bullet For example
+        p An SQL request:
+        pre
+          code.language-ruby.
+            SELECT  "articles".* FROM "articles"  ORDER BY "articles"."id" ASC LIMIT 1
+        p An ActiveRecord request:
+        pre
+          code.language-ruby.
+            Article.first
+
+      section
+        h2 Let's try some
+        p Let's use the project we made in lesson 1
+        pre
+          code.language-bash.
+            > rails g model article title:string content:string
+            # Check our folder
+            > rake db:migrate
+            > rails c
+
+      section
+        h2 Let's try some
+        p Create an article
+        pre
+          code.language-ruby.
+            # build an article
+            > article = Article.new
+
+            # fill the article
+            > article.title = 'Hello world!'
+            > article.content = 'Some content'
+
+            # Safe the article
+            > article.save
+
+      section
+        h2 Articles
+        p Create an article (shortcode)
+        pre
+          code.language-ruby.
+            # build, fill and create an article
+            > Article.create(title: 'Some title', content: 'Some content')
+
+      section
+        h2 Articles
+        p Find our article
+        pre
+          code.language-ruby.
+            # find all articles where content is 'Some content'
+            > Article.where(content: 'Some content')
+
+            # Find article with id = 1
+            > Article.find(1)
+
+            # Find 1 article with title 'Hello world!'
+            > Article.find_by(title: 'Hello World!')
+
+      section
+        h2 Articles
+        p edit our article
+        pre
+          code.language-ruby.
+            # Find 1 article with title 'Hello world!'
+            > article = Article.find_by(title: 'Hello World!')
+
+            # Edit variables on article
+            > article.content = 'Some new content'
+
+            # Save our article
+            > article.save
+
+      section
+        h2 Articles
+        p edit our article (shortcode)
+        pre
+          code.language-ruby.
+            # Find 1 article with title 'Hello world!' and update it
+            > article = Article.find_by(title: 'Hello World!')
+            > article.update(content: 'some new content')
+
+      section
+        h2 Relations
+        img(src="/images/relations.png", alt="" width="150")
+        p please leave rails console for a second
+        pre
+          code.language-ruby.
+            > exit
+
+      section
+        h2 Relations
+        p An article can have comments
+        pre
+          code.language-bash.
+            > rails g model comment content:text article:belongs_to
+            > rake db:migrate
+        p In our project (sublime)
+        pre
+          code.language-ruby.
+            # app/models/article.rb
+            has_many :comments
+
+            # app/models/comment.rb
+            belongs_to :article
+
+      section
+        h2 Relations
+        p Let's try (enter rails console again)
+        pre
+          code.language-bash.
+            > Article.first.comments.create(content: 'This is a commment')
+            y Comment.first
+
+      section
+        h2 Validations
+        img(src="/images/validation.png", alt="" width="150")
+
+      section
+        h2 Validations
+        p Sometimes you want to validate your data before you save it to de database
+        pre
+          code.language-ruby.
+            # app/models/article.rb
+            validates :title, presence: true
+
+            # in rails console
+            > Article.create(content: 'lol')
+            # woops
+
+      section(style="background: url(/images/applause.gif) no-repeat; background-size: cover")
+
+    script(src='build/build.js')

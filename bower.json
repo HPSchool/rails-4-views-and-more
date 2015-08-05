@@ -1,0 +1,7 @@
+{
+  "name": "presentation-lets-ride-that-rails",
+  "version": "0.0.0",
+  "dependencies": {
+    "prism": "gh-pages"
+  }
+}
