@@ -3,7 +3,7 @@ html
   head
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
-    title Model up!
+    title Meanwhile in the Controll-room
 
     link(rel='stylesheet', type='text/css', href='build/build.css')
 
@@ -11,24 +11,29 @@ html
 
     article
       section
-        h1 Getting started with Models
-        p and activeRecord
+        h1 Meanwhile in the controller room
+        p and a swish of views
         img(src="/images/logo.png", alt="" width="150")
 
       section
         h2.bullet In this second lesson
         ul
-          li MVC's
-          li The model
-          li ActiveRecord
+          li repeat MVC's
+          li The Controller
+          li Routing from the outside in
+          li Controller methods
+          li Params (and session store)
+          li before_actions and before filters
+          li protect from forgery and the application controller
+          li writing a resourceful route with some views
 
       section
-        h2 MVC's
+        h2 Repeat MVC's
         p What does it do?
         img(src="/images/mvc.png", alt="" width="300")
 
       section
-        h2 MVC's
+        h2 repeat MVC's
         h3 In Rails
         p Request = config/routes.rb
         p Controller = app/controllers
@@ -37,153 +42,175 @@ html
         img(src="/images/mvc.png", alt="" width="150")
 
       section
-        h2 The model
+        h2 The controller
+        p
+        img(src="/images/controller.png", alt="" width="150")
+
+      section
+        h2 The controller
         h3.bullet It:
         ul
-          li Mediates between your app and databases
-          li Does all the math
-          li Is the source of (most) Classes
+          li is the center of your application
+          li handles diffrent requests from your router
+          li gets variables from your model
+          li accesses information like session data and user provided parameters
+          li renders html views (and even emails)
 
       section
-        h2 ActiveRecord
-        img(src="/images/activerecord.png", alt="" width="150px")
+        h2 The controller
+        h3 Let's create one.
+        pre
+          code.language-bash.
+            rails g controller articles
+
 
       section
-        h2 ActiveRecord
-        h3.bullet It:
+        h2 Routers
+        p Routing from the outside in
+        img(src="/images/router.png", alt="" width="150")
+
+      section
+        h2 Routers
+        p Let's write some routers
+        pre
+          code.language-ruby.
+            # config/routes.rb
+
+            #convention routes
+            root 'articles#index'
+
+            #resourceful routes
+            resources :articles
+
+            # specified routes
+            get '/contact', to: 'pages#contact', as: :some_contact
+
+            get 'login', to: 'logins#create', as: :login_path
+            post 'login', to: 'logins#create', as: :login_path
+
+      section
+        h2 Routers
+        p now visit
+        p localhost:3000/rails/info
+        p or do 'bin/rake routes' in console
+
+      section
+        h2 Routers
+        h3 more info: http://guides.rubyonrails.org/routing.html
+
+      section
+        h2 Controllers
+        img(src="/images/controller.png", alt="" width="150")
+
+      section
+        h2 Controllers
+        h3.bullet Controller methods:
         ul
-          li Is a framework between the Model and SQL based database systems
-          li converts a ton of awesome stuff to more awesome stuff
+          li Store a piece of behaviour for a page or action
+          li store methods that never have more then 10 lines and a branch condition size of 15
 
       section
-        h2 ActiveRecord
-        h3.bullet For example
-        p An SQL request:
+        h2 Controllers
+        h3 Let's make an index
         pre
           code.language-ruby.
-            SELECT  "articles".* FROM "articles"  ORDER BY "articles"."id" ASC LIMIT 1
-        p An ActiveRecord request:
+            # in app/controllers/articles_controller.rb
+
+            def index
+              @articles = Article.all
+            end
+
+      section
+        h2 Controllers
+        h3 Let's make an index
         pre
           code.language-ruby.
-            Article.first
+            # in app/views/controllers/index.html.erb
+            &lt;% @articles.each do |article| %&gt;
+
+              &lt;h1&gt;&lt;%= article.title %&gt;&lt;/h1&gt;
+
+              &lt;p&gt;&lt;%= article.content.html_safe %&gt;&lt;/p&gt;
 
       section
-        h2 Let's try some
-        p Let's use the project we made in lesson 1
-        pre
-          code.language-bash.
-            > rails g model article title:string content:string
-            # Check our folder
-            > rake db:migrate
-            > rails c
+        h2 Controllers
+        h3 Let's make an index
+        p visit localhost:3000/articles
 
       section
-        h2 Let's try some
-        p Create an article
-        pre
-          code.language-ruby.
-            # build an article
-            > article = Article.new
-
-            # fill the article
-            > article.title = 'Hello world!'
-            > article.content = 'Some content'
-
-            # Safe the article
-            > article.save
-
-      section
-        h2 Articles
-        p Create an article (shortcode)
+        h2 Controllers
+        h3 Lets play with params
         pre
           code.language-ruby.
-            # build, fill and create an article
-            > Article.create(title: 'Some title', content: 'Some content')
+            # in app/controllers/articles_controller.rb
+            def index
+              @articles = Article.all
+
+              if params[:my_text].present?
+                @my_text = params[:my_text]
+              else
+                @my_text = 'nothing'
+              end
+            end
 
       section
-        h2 Articles
-        p Find our article
+        h2 Controllers
+        h3 Lets play with params
         pre
           code.language-ruby.
-            # find all articles where content is 'Some content'
-            > Article.where(content: 'Some content')
+            # in app/views/controllers/index.html.erb
+            &lt;% @articles.each do |article| %&gt;
 
-            # Find article with id = 1
-            > Article.find(1)
+              &lt;h1&gt;&lt;%= article.title %&gt;&lt;/h1&gt;
 
-            # Find 1 article with title 'Hello world!'
-            > Article.find_by(title: 'Hello World!')
+              &lt;p&gt;&lt;%= article.content.html_safe %&gt;&lt;/p&gt;
+            &lt;% end %&gt;
+
+            &lt;hr&gt;
+            &lt;%= @my_text %&gt;
 
       section
-        h2 Articles
-        p edit our article
+        h2 Controllers
+        h3 Let's play with params
+        p visit localhost:3000/articles again
+        p now visit <br> localhost:3000/articles?my_text=SomeTextHere
+
+      section
+        h2 Controllers
+        h3.bullet before_actions and before filters with private methods:
+        ul
+          li Allow repeated code to be written only once
+          li Allow a bit more calculations in a controller.
+
+      section
+        h2 Controllers
+        h3 before_actions and before filters with private methods
+        p Example
         pre
           code.language-ruby.
-            # Find 1 article with title 'Hello world!'
-            > article = Article.find_by(title: 'Hello World!')
+            before_action :set_article, only: [:show, :edit, :update, :destroy]
 
-            # Edit variables on article
-            > article.content = 'Some new content'
+            def your stuf here
+            end
 
-            # Save our article
-            > article.save
+            private
 
-      section
-        h2 Articles
-        p edit our article (shortcode)
-        pre
-          code.language-ruby.
-            # Find 1 article with title 'Hello world!' and update it
-            > article = Article.find_by(title: 'Hello World!')
-            > article.update(content: 'some new content')
+            def set_article
+              @article = Article.find(params[:id])
+            end
 
       section
-        h2 Relations
-        img(src="/images/relations.png", alt="" width="150")
-        p please leave rails console for a second
-        pre
-          code.language-ruby.
-            > exit
+        h2 Controllers
+        h3 Application Controller
+        p check app/controllers/application_controller
 
       section
-        h2 Relations
-        p An article can have comments
-        pre
-          code.language-bash.
-            > rails g model comment content:text article:belongs_to
-            > rake db:migrate
-        p In our project (sublime)
-        pre
-          code.language-ruby.
-            # app/models/article.rb
-            has_many :comments
-
-            # app/models/comment.rb
-            belongs_to :article
+        h2 Controller
+        h3 Let's build an articles controller now.
 
       section
-        h2 Relations
-        p Let's try (enter rails console again)
-        pre
-          code.language-bash.
-            > Article.first.comments.create(content: 'This is a commment')
-            y Comment.first
-
-      section
-        h2 Validations
-        img(src="/images/validation.png", alt="" width="150")
-
-      section
-        h2 Validations
-        p Sometimes you want to validate your data before you save it to de database
-        pre
-          code.language-ruby.
-            # app/models/article.rb
-            validates :title, presence: true
-
-            # in rails console
-            > Article.create(content: 'lol')
-            # woops
+        h2 Controller
+        h3 bonus: responders
 
       section(style="background: url(/images/applause.gif) no-repeat; background-size: cover")
 
